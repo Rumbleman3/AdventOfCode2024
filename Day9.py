@@ -15,24 +15,24 @@ for index, char in enumerate(diskmap):
         expanded = expanded + (chr(20000) * int(char))
 
 # Silver star
-# compactOriginal = list(copy.deepcopy(expanded))
-# compact = list(copy.deepcopy(expanded))
-# open = 0
-# for i in range(len(expanded) - 1, 0, -1):
-#     while (compact[open] != chr(20000)):
-#         open += 1
-#     if (open > i):
-#         break
-#     compact[open] = expanded[i]     
-#     compact[i] = chr(20000)
+compactOriginal = list(copy.deepcopy(expanded))
+compact = list(copy.deepcopy(expanded))
+open = 0
+for i in range(len(expanded) - 1, 0, -1):
+    while (compact[open] != chr(20000)):
+        open += 1
+    if (open > i):
+        break
+    compact[open] = expanded[i]     
+    compact[i] = chr(20000)
 
-# checksum = 0
-# for index in range(0, i + 1):
-#     number = ord(compact[index])
-#     checksum += index * number
-#     if index == 49780:
-#         continue
-# print(checksum)
+checksum = 0
+for index in range(0, i + 1):
+    number = ord(compact[index])
+    checksum += index * number
+    if index == 49780:
+        continue
+print(checksum)
            
 # Gold star
 compactOriginal = list(copy.deepcopy(expanded))
