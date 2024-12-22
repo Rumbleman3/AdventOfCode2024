@@ -223,42 +223,11 @@ movesneeded = []
 for change in possibledirectionchanges:
     directionchangescurrent = getdirectionsfromdirectionpair(change)
     directioncodescurrent = getcodes(directionchangescurrent)
-    for index in range(0, 24):
+    for index in range(0, 1):
         directionchangescurrent = getdirectionsfromdirections(directioncodescurrent)
         directioncodescurrent = getcodes(directionchangescurrent)
     movesneeded.append([change, len(directioncodescurrent[0])])
-print(movesneeded)
-
-# for change in possibledirectionchanges:
-#     directionchangescurrent = getdirectionsfromdirectionpair(change)
-#     directioncodescurrent = getcodes(directionchangescurrent)
-#     for index in range(0, 24):
-#         directionchangescurrent = getdirectionsfromdirections(directioncodescurrent)
-#         directioncodescurrent = getcodes(directionchangescurrent)
-
-#         if len(directioncodescurrent) > 1:
-#             calculatedruns = []
-#             lowestrunsteps = -1
-#             for directioncodelement in directioncodescurrent:
-#                 currentpos = 'A'
-#                 runsteps = 0
-#                 for step in directioncodelement:
-#                     nextpos = step
-#                     for move in basicmovesneeded:
-#                         if [currentpos, nextpos] == move[0]:
-#                             runsteps += move[1]
-#                 calculatedruns.append([directioncodelement, runsteps])
-#                 if lowestrunsteps == -1 or lowestrunsteps > runsteps:
-#                     lowestrunsteps = runsteps
-#             newdirectioncodecurrent = []
-#             for element in calculatedruns:
-#                 if element[1] == lowestrunsteps:
-#                     newdirectioncodecurrent.append(element[0])
-#             directioncodescurrent = newdirectioncodecurrent
-
-#     movesneeded.append([change, len(directioncodescurrent[0])])
-# print(movesneeded)
-
+    
 # silver
 finalComplexity = 0
 for code in codes:    
