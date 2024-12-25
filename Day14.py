@@ -33,22 +33,43 @@ print(total)
 # gold
 found = False
 second = 1
+empty_map = []
+for i in range(0, 103):
+    empty_map.append([])
+    for j in range(0, 101):
+        empty_map[i].append('.')
+import copy
 while not found:
-    map = []
-    for i in range(0, 103):
-        map.append([])
-        for j in range(0, 101):
-            map[i].append('.')
+    map = copy.deepcopy(empty_map)
     for robot in robots:        
         x = (int(robot[0]) + second * int(robot[2])) % length
         y = (int(robot[1]) + second * int(robot[3])) % height
         map[y][x] = '1'
     
-    for i in range (0, 103):
+    linedup = False
+    for i in range (50, 103):
         for j in range (0, 101):
             if map[i][j] == '1':
-                if i - 1 >= 0 and i + 1 < 103 and j - 1 >=0 and j + 1 < 101:
-                    if map[i-1][j-1] == '.'
+                for index in range(0, 11):
+                    if i + index < 103:
+                        if map[i + index][j] != '1':
+                            break
+                    else:
+                        break
+                if index == 10:
+                    linedup = True
+            if linedup:
+                break
+        if linedup:
+            break
+    if linedup:
+        break
+
+    second += 1
+
+print(second)
+for line in map:
+    print(line)
         
 #     starti = 0
 #     startj = 0
