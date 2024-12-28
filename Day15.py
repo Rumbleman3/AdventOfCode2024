@@ -110,58 +110,124 @@ roboti = 0
 robotj = 0
 for i in range(0, len(map2)):
     for j in range(0, len(map2[i])):
-        if map[i][j] == '@':
+        if map2[i][j] == '@':
             roboti = i
             robotj = j
 
 for instructionNum in range(0, len(instructions)):
     instruction = instructions[instructionNum]
     if instruction == '^':
-        currenti = roboti - 1
+        currenti = roboti
         currentj = robotj 
+        push = True
+        span_level = {}
+        span_level[currenti - 1] = [currentj]
+        while currenti < len(map2):
+            currenti = currenti - 1
+            lastleveltocheck = span_level[currenti]
+            nextspanlevel = []
+            for j in lastleveltocheck:                        
+                if map2[currenti][j] == '#':
+                    push = False
+                    break
+                if map2[currenti][j] == '[':
+                    if j not in nextspanlevel:
+                        nextspanlevel.append(j)
+                    if j + 1 not in nextspanlevel:
+                        nextspanlevel.append(j + 1)
+                elif map2[currenti][j] == ']':
+                    if j not in nextspanlevel:
+                        nextspanlevel.append(j)
+                    if j - 1 not in nextspanlevel:
+                        nextspanlevel.append(j - 1)
+            if len(nextspanlevel) == 0:
+                break
+            else:
+                span_level[currenti - 1] = nextspanlevel
+        if push:
+            for index, (key, value) in enumerate(reversed(list(span_level.items()))):
+                for j in value:
+                    map2[key][j] = map2[key + 1][j]
+                    map2[key + 1][j] = '.'
+            map2[roboti][robotj] = '.'
+            roboti = roboti - 1        
 
     elif instruction == 'v':
-        currenti = roboti + 1
-        currentj = robotj 
+        currenti = roboti
+        currentj = robotj
+        push = True
+        span_level = {}
+        span_level[currenti + 1] = [currentj]
+        while currenti < len(map2):
+            currenti = currenti + 1
+            lastleveltocheck = span_level[currenti]
+            nextspanlevel = []
+            for j in lastleveltocheck:                        
+                if map2[currenti][j] == '#':
+                    push = False
+                    break
+                if map2[currenti][j] == '[':
+                    if j not in nextspanlevel:
+                        nextspanlevel.append(j)
+                    if j + 1 not in nextspanlevel:
+                        nextspanlevel.append(j + 1)
+                elif map2[currenti][j] == ']':
+                    if j not in nextspanlevel:
+                        nextspanlevel.append(j)
+                    if j - 1 not in nextspanlevel:
+                        nextspanlevel.append(j - 1)
+            if len(nextspanlevel) == 0:
+                break
+            else:
+                span_level[currenti + 1] = nextspanlevel
+        if push:
+            for index, (key, value) in enumerate(reversed(list(span_level.items()))):
+                for j in value:
+                    map2[key][j] = map2[key - 1][j]
+                    map2[key - 1][j] = '.'
+            map2[roboti][robotj] = '.'    
+            roboti = roboti + 1        
 
     elif instruction == '<':
         currenti = roboti
         currentj = robotj - 1 
         push = False 
         while currentj < len(map2[i]):
-            if currentj == '#':
+            if map2[currenti][currentj] == '#':
                 break
-            elif map2[currenti][currentj] == '[':
-                currentj += 1
+            elif map2[currenti][currentj] == '[' or map2[currenti][currentj] == ']':
+                currentj -= 1
             else:
                 push = True
                 break 
         if push:
-            for indexj in range(robotj - 1, currentj, -1):
+            for indexj in range(currentj, robotj):
                 map2[currenti][indexj] = map2[currenti][indexj + 1]
             map2[roboti][robotj] = '.'
+            robotj = robotj - 1 
  
     elif instruction == '>':
         currenti = roboti
         currentj = robotj + 1
         push = False 
         while currentj < len(map2[i]):
-            if currentj == '#':
+            if map2[currenti][currentj] == '#':
                 break
-            elif map2[currenti][currentj] == '[':
+            elif map2[currenti][currentj] == '[' or map2[currenti][currentj] == ']':
                 currentj += 1
             else:
                 push = True
                 break 
         if push:
-            for indexj in range(robotj + 1, currentj):
+            for indexj in range(currentj, robotj, - 1):
                 map2[currenti][indexj] = map2[currenti][indexj - 1]
             map2[roboti][robotj] = '.'
+            robotj = robotj + 1 
 
 
 gps = 0
 for i in range(0, len(map2)):
     for j in range(0, len(map2[i])):
-        if map2[i][j] == 'O':
+        if map2[i][j] == '[':
             gps += 100 * i + j
 print(gps)
