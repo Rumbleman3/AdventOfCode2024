@@ -39,12 +39,12 @@ def getdirectionsfromdirectionpair(currentDirectionCodes):
     dest = dirHash[currentDirectionCodes[1]]
     idiff = dest[0][0] - pos[0]
     jdiff = dest[0][1] - pos[1]
-    for index in range(0, abs(idiff)):
-        if idiff < 0:
-            currentPaths.append([-1, 0])
     for index in range(0, abs(jdiff)):
         if jdiff < 0:
             currentPaths.append([0, -1])
+    for index in range(0, abs(idiff)):
+        if idiff < 0:
+            currentPaths.append([-1, 0])
     for index in range(0, abs(idiff)):
         if idiff > 0:
             currentPaths.append([1, 0])
@@ -100,12 +100,12 @@ def getdirectionsfromdirections(currentDirectionCodes):
             dest = dirHash[char]
             idiff = dest[0][0] - pos[0]
             jdiff = dest[0][1] - pos[1]
-            for index in range(0, abs(idiff)):
-                if idiff < 0:
-                    currentPaths.append([-1, 0])
             for index in range(0, abs(jdiff)):
                 if jdiff < 0:
                     currentPaths.append([0, -1])
+            for index in range(0, abs(idiff)):
+                if idiff < 0:
+                    currentPaths.append([-1, 0])
             for index in range(0, abs(idiff)):
                 if idiff > 0:
                     currentPaths.append([1, 0])
@@ -168,16 +168,18 @@ def getdirectionsfromnum(code):
         dest = numHash[char]
         idiff = dest[0] - pos[0]
         jdiff = dest[1] - pos[1]
+        for index in range(0, abs(jdiff)):
+            if jdiff < 0:
+                currentPaths.append([0, -1])
+        for index in range(0, abs(idiff)):
+            if idiff < 0:
+                currentPaths.append([-1, 0])
         for index in range(0, abs(idiff)):
             if idiff > 0:
                 currentPaths.append([1, 0])
-            else:
-                currentPaths.append([-1, 0])
         for index in range(0, abs(jdiff)):
             if jdiff > 0:
                 currentPaths.append([0, 1])
-            else:                
-                currentPaths.append([0, -1])
         currentPaths = list(itertools.permutations(currentPaths))   
         currentPathsdeduped = []
         for element in currentPaths:
@@ -217,12 +219,12 @@ def getdirectionsfromnum(code):
     return finalPaths
 
 possibledirectionchanges = \
-    [['A','^'],['A','>'],['A','v'],['A','<'] \
-    ,['^','A'],['^','>'],['^','v'],['^','<'] \
-    ,['>','^'],['>','A'],['>','v'],['>','<'] \
-    ,['<','^'],['<','>'],['<','v'],['<','A'] \
-    ,['v','^'],['v','>'],['v','A'],['v','<']]
-movesneeded = []
+    [('A','^'),('A','>'),('A','v'),('A','<'),('A','A') \
+    ,('^','A'),('^','>'),('^','v'),('^','<'),('^','^') \
+    ,('>','^'),('>','A'),('>','v'),('>','<'),('>','>') \
+    ,('<','^'),('<','>'),('<','v'),('<','A'),('<','<') \
+    ,('v','^'),('v','>'),('v','A'),('v','<'),('v','v')]
+movesneeded = {}
 for change in possibledirectionchanges:
     directionchangescurrent = getdirectionsfromdirectionpair(change)
     directioncodescurrent = getcodes(directionchangescurrent)
@@ -230,58 +232,67 @@ for change in possibledirectionchanges:
         directionchangescurrent = getdirectionsfromdirections(directioncodescurrent)
         directioncodescurrent = getcodes(directionchangescurrent)
         directioncodescurrent = [directioncodescurrent[0]]
-    movesneeded.append([change, directioncodescurrent[0], len(directioncodescurrent[0])])
-# for move in movesneeded:
-#     print(move)
+    movesneeded[change] = [directioncodescurrent[0], len(directioncodescurrent[0])]
+for (key, value) in enumerate(movesneeded.items()):
+     print(key, value)
 
-finaldirectioncodes = []
+finaldirectioncodes = {}
 for change in possibledirectionchanges:
     directionchangescurrent = getdirectionsfromdirectionpair(change)
     directioncodescurrent = getcodes(directionchangescurrent)[0]
-    directioncodescurrent = ['A'] + directioncodescurrent
-    for index in range(0, 3):
+    directioncodescurrent.insert(0, 'A')
+    for index in range(0, 11):
         newdirectioncodescurrent = ['A']
         for index2, value2 in enumerate(directioncodescurrent):
             if index2 < len(directioncodescurrent) - 1:
-                found = False
-                for move in movesneeded:
-                    if [directioncodescurrent[index2], directioncodescurrent[index2 + 1]] == move[0]:
-                        newdirectioncodescurrent = newdirectioncodescurrent + move[1]
-                        found = True
-                        break
-                if not found:
-                    newdirectioncodescurrent = newdirectioncodescurrent + ['A']
+                move = movesneeded[(directioncodescurrent[index2], directioncodescurrent[index2 + 1])]
+                newdirectioncodescurrent = newdirectioncodescurrent + move[0]
         directioncodescurrent = newdirectioncodescurrent
-    finaldirectioncodes.append([change, directioncodescurrent, len(directioncodescurrent) - 1])
+    directioncodescurrent.remove('A')
+    finaldirectioncodes[change] = [directioncodescurrent, len(directioncodescurrent)]
+    print(change, len(directioncodescurrent))
 
-for move in finaldirectioncodes:
-    print(move)
-#    print(str(move[0]) + " - " + str(move[2]))
-            
+superfinaldirectioncodes = {}
+for change in possibledirectionchanges:
+    directioncodescurrent = finaldirectioncodes[change][0]
+    directioncodescurrent.insert(0, 'A')
+    moves = 0
+    for index2, value2 in enumerate(directioncodescurrent):
+        if index2 < len(directioncodescurrent) - 1:
+            move = finaldirectioncodes[(directioncodescurrent[index2], directioncodescurrent[index2 + 1])]
+            moves = moves + move[1]
+    directioncodescurrent.remove('A')
+    superfinaldirectioncodes[change] = [directioncodescurrent, moves]
+    print(change, moves)
+
+# for (key, value) in enumerate(finaldirectioncodes.items()):
+#     print(key, value[1])
+
 # silver
-# finalComplexity = 0
-# for code in codes:    
-#     directions1 = getdirectionsfromnum(code)
-#     directioncodes1 = getcodes(directions1)
-#     min_length = min(len(sub_array) for sub_array in directioncodes1)
-#     directioncodes1 = [sub_array for sub_array in directioncodes1 if len(sub_array) == min_length]
-#     currentpos = 'A'
-#     lowestrunsteps = -1
-#     for run in directioncodes1:
-#         runsteps = 0
-#         for step in run:
-#             nextpos = step
-#             if currentpos == nextpos:
-#                 runsteps += 1
-#             else:
-#                 for move in movesneeded:
-#                     if [currentpos, nextpos] == move[0]:
-#                         runsteps += move[2]
-#             currentpos = nextpos
-#         if lowestrunsteps == -1 or lowestrunsteps > runsteps:
-#             lowestrunsteps = runsteps
-#     finalComplexity += lowestrunsteps * int(code.strip('A'))
-# print(finalComplexity)
+finalComplexity = 0
+for code in codes:    
+    directions1 = getdirectionsfromnum(code)
+    directioncodes1 = getcodes(directions1)
+    directions1 = getdirectionsfromdirections(directioncodes1)
+    directioncodes1 = getcodes(directions1)
+    min_length = min(len(sub_array) for sub_array in directioncodes1)
+    directioncodes1 = [sub_array for sub_array in directioncodes1 if len(sub_array) == min_length]
+    currentpos = 'A'
+    lowestrunsteps = -1
+    for run in directioncodes1:
+        runsteps = 0
+        for step in run:
+            nextpos = step
+            if currentpos == nextpos:
+                runsteps += 1
+            else:
+                move = superfinaldirectioncodes[(currentpos, nextpos)]
+                runsteps += move[1]
+            currentpos = nextpos
+        if lowestrunsteps == -1 or lowestrunsteps > runsteps:
+            lowestrunsteps = runsteps
+    finalComplexity += lowestrunsteps * int(code.strip('A'))
+print(finalComplexity)
 
 
       

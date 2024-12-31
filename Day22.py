@@ -37,10 +37,6 @@ for index, (key, value) in enumerate(differences.items()):
         price = sequences[key][index2 + 4]
         if difference not in local_best_prices:
             local_best_prices[difference] = [key, price, index2 + 4]
-        # else:            
-        #     if local_best_prices[difference][1] < price:                    
-        #         local_best_prices[difference][1] = price                
-        #         local_best_prices[difference][2] = index2 + 4
     for index2, (key2, value2) in enumerate(local_best_prices.items()):
         if key2 not in best_prices:
             best_prices[key2] = [value2]
